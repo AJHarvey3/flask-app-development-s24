@@ -89,5 +89,12 @@ def delete_task():
     row_id = request.form['task']
     db.execute('delete from entries where id = ?', (row_id,))
     db.commit()
+
+@app.route('/add' , methods = ['POST'])
+def complete_task(id):
+    db = get_db()
+    db.execute('UPDATE tasks SET completed = 1 WHERE id = ?')
+    db.commit()
+    flash('Entry was completed')
     return redirect(url_for('show_entries'))
 
