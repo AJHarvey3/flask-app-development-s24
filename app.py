@@ -82,10 +82,19 @@ def add_entry():
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
+
 @app.route('/delete', methods=['POST'])
 def delete_task():
     db = get_db()
     row_id = request.form['task']
     db.execute('delete from entries where id = ?', (row_id,))
     db.commit()
+
+@app.route('/add' , methods = ['POST'])
+def complete_task(id):
+    db = get_db()
+    db.execute('UPDATE tasks SET completed = 1 WHERE id = ?')
+    db.commit()
+    flash('Entry was completed')
     return redirect(url_for('show_entries'))
+
