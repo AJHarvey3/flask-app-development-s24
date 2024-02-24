@@ -14,7 +14,6 @@ import os
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, g, redirect, url_for, render_template, flash
 
-
 # create our little application :)
 app = Flask(__name__)
 
@@ -89,12 +88,23 @@ def delete_task():
     row_id = request.form['task']
     db.execute('delete from entries where id = ?', (row_id,))
     db.commit()
-
-@app.route('/add' , methods = ['POST'])
-def complete_task(id):
-    db = get_db()
-    db.execute('UPDATE tasks SET completed = 1 WHERE id = ?')
-    db.commit()
-    flash('Entry was completed')
     return redirect(url_for('show_entries'))
 
+
+@app.route('/complete', methods=['POST'])
+def complete_task():
+    db = get_db()
+    row_id = request.form['task']
+    db.execute('UPDATE entries SET title = "Completed" WHERE id = ?', (row_id,))
+    db.commit()
+    return redirect(url_for('show_entries'))
+
+
+@app.route('/edit', methods=['POST'])
+def edit_task():
+    db = get_db()
+    row_title = request.form['task']
+    new_title = request.form['new_title']
+    db.execute('UPDATE entries SET title = ? WHERE title = ?', (new_title, row_title))
+    db.commit()
+    return redirect(url_for('show_entries'))
